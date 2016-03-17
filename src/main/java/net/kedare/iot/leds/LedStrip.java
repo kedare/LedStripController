@@ -1,90 +1,75 @@
 package net.kedare.iot.leds;
 
 import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import net.kedare.iot.particle.ParticleException;
+import net.kedare.iot.particle.ParticleObject;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 
-public class LedStrip {
+public class LedStrip extends ParticleObject {
     public static final List<String> SUPPORTED_PROGRAMS = Arrays.asList("colorWipe", "rainbow", "rainbowCycle", "fullColorCycle", "randomDots", "turnedOff");
     public static final int MAX_POWER = 100;
     public static final int MIN_POWER = 0;
     public static final int MAX_DELAY = 1000;
     public static final int MIN_DELAY = 0;
-    private final static Logger logger =
-            Logger.getLogger(LedStrip.class.getName());
-    private String token;
-    private String deviceId;
+    public static Map<String, String> PROGRAMS;
 
-    public LedStrip(String token, String deviceId) {
-        if (token != null && deviceId != null) {
-            this.token = token;
-            this.deviceId = deviceId;
-            logger.info("Connecting with token " + token + " and deviceId " + deviceId);
-        } else {
-            logger.severe("Missing credentials !");
-        }
+    LedStrip(String token, String deviceId, Logger logger) throws ParticleException {
+        super(token, deviceId, logger);
+        this.PROGRAMS.put("colorWipe", "Fixed custom color");
+        this.PROGRAMS.put("fadeCycle", "Cycle between 2 colors");
+        this.PROGRAMS.put("gradient", "Gradient between 2 colors");
+        this.PROGRAMS.put("rainbow", "Short color spectrum");
+        this.PROGRAMS.put("rainbowCycle", "Large color spectrum");
+        this.PROGRAMS.put("fullColorCycle", "Cycle between all colors");
+        this.PROGRAMS.put("randomDots", "Random dots (colors and positions)");
+        this.PROGRAMS.put("frozen", "Freeze to current state");
+        this.PROGRAMS.put("off", "Turn off");
     }
 
-    public JsonNode getVariable(String variableName) {
-        try {
-            return Unirest.get("https://api.particle.io/v1/devices/{device_id}/{variable}")
-                    .routeParam("device_id", this.deviceId)
-                    .routeParam("variable", variableName)
-                    .queryString("access_token", this.token)
-                    .asJson().getBody();
-        } catch (UnirestException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public JsonNode callFunction(String functionName, HashMap<String, Object> arguments) {
-        try {
-            return Unirest.post("https://api.particle.io/v1/devices/{device_id}/{function}")
-                    .routeParam("device_id", this.deviceId)
-                    .routeParam("function", functionName)
-                    .queryString("access_token", this.token)
-                    .fields(arguments)
-                    .asJson().getBody();
-        } catch (UnirestException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public JsonNode getMode() {
+    public JsonNode getMode() throws UnirestException {
         return this.getVariable("mode");
     }
 
-    public JsonNode setMode(String program) {
+    public JsonNode setMode(String program) throws UnirestException {
         HashMap<String, Object> params = new HashMap<>();
         params.put("mode", program);
         return this.callFunction("setMode", params);
     }
 
-    public JsonNode getDelay() {
+    public JsonNode getDelay() throws UnirestException {
         return this.getVariable("wait");
     }
 
-    public JsonNode setDelay(int delay) {
+    public JsonNode setDelay(int delay) throws UnirestException {
         HashMap<String, Object> params = new HashMap<>();
         params.put("wait", delay);
         return this.callFunction("setWait", params);
     }
 
-    public JsonNode getPower() {
+    public JsonNode getPower() throws UnirestException {
         return this.getVariable("power");
     }
 
-    public JsonNode setPower(int power) {
-        HashMap<String, Object> params = new HashMap<String, Object>();
+    public JsonNode setPower(int power) throws UnirestException {
+        HashMap<String, Object> params = new HashMap<>();
         params.put("power", power);
         return this.callFunction("setPower", params);
+    }
+
+    public JsonNode getColor(int index) throws UnirestException {
+        this.getVariable("color" + index);
+    }
+
+    public JsonNode setColor(int index, String color) throws UnirestException {
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("color" + index, color);
+        return this.callFunction("setColor" + index, params);
     }
 }

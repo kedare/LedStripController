@@ -16,40 +16,59 @@ public class LedStripController {
 
         logger.info("Current directory is " + new java.io.File(".").getCanonicalPath());
 
-        LedStrip ledStrip = new LedStrip(token, deviceId);
+        LedStrip ledStrip = new LedStrip(token, deviceId, logger);
 
         externalStaticFileLocation("static");
 
-        get("/modes", (req, res) -> {
+        // Modes list
+        get("/api/modes", (req, res) -> {
             res.type("application/json");
             return new JSONArray(LedStrip.SUPPORTED_PROGRAMS);
         });
 
-        get("/mode", (req, res) -> {
+        // GET/SET mode
+        get("/api/mode", (req, res) -> {
             res.type("application/json");
             return ledStrip.getMode();
         });
-        post("/mode", (req, res) -> {
+
+        post("/api/mode", (req, res) -> {
             res.type("application/json");
             return ledStrip.setMode(req.queryParams("mode"));
         });
 
-        get("/power", (req, res) -> {
+        // GET/SET Power
+        get("/api/power", (req, res) -> {
             res.type("application/json");
             return ledStrip.getPower();
         });
-        post("/power", (req, res) -> {
+
+        post("/api/power", (req, res) -> {
             res.type("application/json");
             return ledStrip.setPower(Integer.parseInt(req.queryParams("power")));
         });
 
-        get("/wait", (req, res) -> {
+        // GET/SET Wait
+        get("/api/wait", (req, res) -> {
             res.type("application/json");
             return ledStrip.getDelay();
         });
-        post("/wait", (req, res) -> {
+
+        post("/api/wait", (req, res) -> {
             res.type("application/json");
             return ledStrip.setDelay(Integer.parseInt(req.queryParams("delay")));
         });
+
+        // GET/SET color
+        get("/api/color/:index", (req, res) -> {
+            res.type("application/json");
+            return ledStrip.getColor(req.params("index"));
+        });
+
+        post("/api/color/:index", (req, res) -> {
+            res.type("application/json");
+            return ledStrip.setColor(req.params("index"), req.queryParams("color"));
+        });
+
     }
 }
