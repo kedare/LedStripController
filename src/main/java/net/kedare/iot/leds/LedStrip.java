@@ -5,32 +5,29 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import net.kedare.iot.particle.ParticleException;
 import net.kedare.iot.particle.ParticleObject;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 
 public class LedStrip extends ParticleObject {
-    public static final List<String> SUPPORTED_PROGRAMS = Arrays.asList("colorWipe", "rainbow", "rainbowCycle", "fullColorCycle", "randomDots", "turnedOff");
     public static final int MAX_POWER = 100;
     public static final int MIN_POWER = 0;
     public static final int MAX_DELAY = 1000;
     public static final int MIN_DELAY = 0;
-    public static Map<String, String> PROGRAMS;
+    public static Map<String, String> PROGRAMS = new HashMap<>();
 
     LedStrip(String token, String deviceId, Logger logger) throws ParticleException {
         super(token, deviceId, logger);
-        this.PROGRAMS.put("colorWipe", "Fixed custom color");
-        this.PROGRAMS.put("fadeCycle", "Cycle between 2 colors");
-        this.PROGRAMS.put("gradient", "Gradient between 2 colors");
-        this.PROGRAMS.put("rainbow", "Short color spectrum");
-        this.PROGRAMS.put("rainbowCycle", "Large color spectrum");
-        this.PROGRAMS.put("fullColorCycle", "Cycle between all colors");
-        this.PROGRAMS.put("randomDots", "Random dots (colors and positions)");
-        this.PROGRAMS.put("frozen", "Freeze to current state");
-        this.PROGRAMS.put("off", "Turn off");
+        PROGRAMS.put("colorWipe", "Fixed custom color");
+        PROGRAMS.put("fadeCycle", "Cycle between 2 colors");
+        PROGRAMS.put("gradient", "Gradient between 2 colors");
+        PROGRAMS.put("rainbow", "Short color spectrum");
+        PROGRAMS.put("rainbowCycle", "Large color spectrum");
+        PROGRAMS.put("fullColorCycle", "Cycle between all colors");
+        PROGRAMS.put("randomDots", "Random dots (colors and positions)");
+        PROGRAMS.put("frozen", "Freeze to current state");
+        PROGRAMS.put("off", "Turn off");
     }
 
     public JsonNode getMode() throws UnirestException {
@@ -64,7 +61,7 @@ public class LedStrip extends ParticleObject {
     }
 
     public JsonNode getColor(int index) throws UnirestException {
-        this.getVariable("color" + index);
+        return this.getVariable("color" + index);
     }
 
     public JsonNode setColor(int index, String color) throws UnirestException {

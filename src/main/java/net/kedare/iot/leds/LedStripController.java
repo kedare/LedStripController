@@ -1,6 +1,6 @@
 package net.kedare.iot.leds;
 
-import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.logging.Logger;
 
@@ -11,19 +11,18 @@ public class LedStripController {
         String token = System.getenv("LED_CONTROLLER_TOKEN");
         String deviceId = System.getenv("LED_CONTROLLER_DEVICE");
 
-        Logger logger =
-                Logger.getLogger(LedStripController.class.getName());
+        Logger logger = Logger.getLogger(LedStripController.class.getName());
 
         logger.info("Current directory is " + new java.io.File(".").getCanonicalPath());
 
         LedStrip ledStrip = new LedStrip(token, deviceId, logger);
 
-        externalStaticFileLocation("static");
+        externalStaticFileLocation("webapp");
 
         // Modes list
         get("/api/modes", (req, res) -> {
             res.type("application/json");
-            return new JSONArray(LedStrip.SUPPORTED_PROGRAMS);
+            return new JSONObject(LedStrip.PROGRAMS);
         });
 
         // GET/SET mode
@@ -56,18 +55,18 @@ public class LedStripController {
 
         post("/api/wait", (req, res) -> {
             res.type("application/json");
-            return ledStrip.setDelay(Integer.parseInt(req.queryParams("delay")));
+            return ledStrip.setDelay(Integer.parseInt(req.queryParams("wait")));
         });
 
         // GET/SET color
         get("/api/color/:index", (req, res) -> {
             res.type("application/json");
-            return ledStrip.getColor(req.params("index"));
+            return ledStrip.getColor(Integer.parseInt(req.params("index")));
         });
 
         post("/api/color/:index", (req, res) -> {
             res.type("application/json");
-            return ledStrip.setColor(req.params("index"), req.queryParams("color"));
+            return ledStrip.setColor(Integer.parseInt(req.params("index")), req.queryParams("color"));
         });
 
     }
