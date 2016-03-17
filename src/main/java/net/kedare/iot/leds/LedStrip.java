@@ -31,42 +31,42 @@ public class LedStrip extends ParticleObject {
     }
 
     public JsonNode getMode() throws UnirestException {
-        return this.getVariable("mode");
+        return this.get("mode");
     }
 
     public JsonNode setMode(String program) throws UnirestException {
         HashMap<String, Object> params = new HashMap<>();
         params.put("mode", program);
-        return this.callFunction("setMode", params);
+        return this.call("setMode", params);
     }
 
     public JsonNode getDelay() throws UnirestException {
-        return this.getVariable("wait");
+        return this.get("wait");
     }
 
     public JsonNode setDelay(int delay) throws UnirestException {
         HashMap<String, Object> params = new HashMap<>();
         params.put("wait", delay);
-        return this.callFunction("setWait", params);
+        return this.call("setWait", params);
     }
 
     public JsonNode getPower() throws UnirestException {
-        return this.getVariable("power");
+        return this.get("power");
     }
 
     public JsonNode setPower(int power) throws UnirestException {
         HashMap<String, Object> params = new HashMap<>();
         params.put("power", power);
-        return this.callFunction("setPower", params);
+        return this.call("setPower", params);
     }
 
     public JsonNode getColor(int index) throws UnirestException {
-        return this.getVariable("color" + index);
+        return this.get("color" + index);
     }
 
     public JsonNode setColor(int index, String color) throws UnirestException {
         HashMap<String, Object> params = new HashMap<>();
         params.put("color" + index, color);
-        return this.callFunction("setColor" + index, params);
+        return this.call("setColor" + index, params);
     }
 }

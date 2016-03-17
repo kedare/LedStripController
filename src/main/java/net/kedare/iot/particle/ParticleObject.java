@@ -27,9 +27,20 @@ public class ParticleObject {
         } else {
             throw new ParticleException("Missing credentials");
         }
+
+        try {
+            JsonNode body = Unirest.get("https://api.particle.io/v1/devices/{device_id}")
+                    .routeParam("device_id", this.deviceId)
+                    .queryString("access_token", this.token)
+                    .asJson().getBody();
+            logger.info("Found device " + body.getObject().getString("name"));
+        } catch (Exception exception) {
+            throw new ParticleException("Fail to connect, reason: " + exception.getClass().getCanonicalName() + " : " + exception.getLocalizedMessage());
+        }
+
     }
 
-    public JsonNode getVariable(String variableName) throws UnirestException {
+    public JsonNode get(String variableName) throws UnirestException {
         return Unirest.get("https://api.particle.io/v1/devices/{device_id}/{variable}")
                 .routeParam("device_id", this.deviceId)
                 .routeParam("variable", variableName)
@@ -37,7 +48,7 @@ public class ParticleObject {
                 .asJson().getBody();
     }
 
-    public JsonNode callFunction(String functionName, HashMap<String, Object> arguments) throws UnirestException {
+    public JsonNode call(String functionName, HashMap<String, Object> arguments) throws UnirestException {
         return Unirest.post("https://api.particle.io/v1/devices/{device_id}/{function}")
                 .routeParam("device_id", this.deviceId)
                 .routeParam("function", functionName)
