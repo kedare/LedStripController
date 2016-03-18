@@ -32,6 +32,13 @@ public class LedStripController implements SparkApplication {
     }
 
     public static void main(String[] args) throws Exception {
+        int configuredPort;
+        try {
+            configuredPort = Integer.valueOf(System.getenv("PORT"));
+        } catch (Exception e) {
+            configuredPort = 80;
+        }
+        port(configuredPort);
         LedStripController controller = new LedStripController();
         controller.init();
     }
