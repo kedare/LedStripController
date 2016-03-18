@@ -1,5 +1,7 @@
 package net.kedare.iot.leds;
 
+import com.qmetric.spark.authentication.AuthenticationDetails;
+import com.qmetric.spark.authentication.BasicAuthenticationFilter;
 import org.json.JSONObject;
 
 import java.util.logging.Logger;
@@ -18,6 +20,8 @@ public class LedStripController {
         LedStrip ledStrip = new LedStrip(token, deviceId, logger);
 
         externalStaticFileLocation("webapp");
+
+        before(new BasicAuthenticationFilter("/*", new AuthenticationDetails(System.getenv("LED_CONTROLLER_USER"), System.getenv("LED_CONTROLLER_PASS"))));
 
         // Modes list
         get("/api/modes", (req, res) -> {
