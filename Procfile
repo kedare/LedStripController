@@ -1,1 +1,1 @@
-web:    java -cp target/classes:target/dependency/* net.kedare.iot.led.LedStripController
+web:    java -cp target/classes:target/dependency/* net.kedare.iot.leds.LedStripController
