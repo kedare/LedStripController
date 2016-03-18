@@ -7,9 +7,6 @@
     <groupId>net.kedare.iot.leds</groupId>
     <artifactId>LedStripController</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <developers>
-        <developer>Mathieu Poussin</developer>
-    </developers>
 
     <packaging>jar</packaging>
 
