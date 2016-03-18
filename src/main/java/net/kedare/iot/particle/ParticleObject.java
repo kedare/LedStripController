@@ -5,6 +5,7 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.util.HashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -23,7 +24,7 @@ public class ParticleObject {
         if (token != null && deviceId != null) {
             this.token = token;
             this.deviceId = deviceId;
-            logger.info("Connecting with token " + token + " and deviceId " + deviceId);
+            logger.log(Level.INFO, "Connecting with token " + token + " and deviceId " + deviceId);
         } else {
             throw new ParticleException("Missing credentials");
         }
@@ -33,7 +34,7 @@ public class ParticleObject {
                     .routeParam("device_id", this.deviceId)
                     .queryString("access_token", this.token)
                     .asJson().getBody();
-            logger.info("Found device " + body.getObject().getString("name"));
+            logger.log(Level.INFO, "Found device " + body.getObject().getString("name"));
         } catch (Exception exception) {
             throw new ParticleException("Fail to connect, reason: " + exception.getClass().getCanonicalName() + " : " + exception.getLocalizedMessage());
         }

@@ -2,22 +2,41 @@ package net.kedare.iot.leds;
 
 import com.qmetric.spark.authentication.AuthenticationDetails;
 import com.qmetric.spark.authentication.BasicAuthenticationFilter;
+import net.kedare.iot.particle.ParticleException;
 import org.json.JSONObject;
+import spark.servlet.SparkApplication;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static spark.Spark.*;
 
-public class LedStripController {
+public class LedStripController implements SparkApplication {
+
+    private LedStrip ledStrip;
+    private String token;
+    private String deviceId;
+    private Logger logger;
+
+    public LedStripController() {
+        this.token = System.getenv("LED_CONTROLLER_TOKEN");
+        this.deviceId = System.getenv("LED_CONTROLLER_DEVICE");
+
+        this.logger = Logger.getLogger(LedStripController.class.getName());
+
+        try {
+            this.ledStrip = new LedStrip(token, deviceId, logger);
+        } catch (ParticleException exception) {
+            logger.log(Level.SEVERE, "Fail to initialize Particle", exception);
+        }
+    }
+
     public static void main(String[] args) throws Exception {
-        String token = System.getenv("LED_CONTROLLER_TOKEN");
-        String deviceId = System.getenv("LED_CONTROLLER_DEVICE");
+        LedStripController controller = new LedStripController();
+        controller.init();
+    }
 
-        Logger logger = Logger.getLogger(LedStripController.class.getName());
-
-        logger.info("Current directory is " + new java.io.File(".").getCanonicalPath());
-
-        LedStrip ledStrip = new LedStrip(token, deviceId, logger);
+    public void init() {
 
         externalStaticFileLocation("webapp");
 
@@ -32,46 +51,45 @@ public class LedStripController {
         // GET/SET mode
         get("/api/mode", (req, res) -> {
             res.type("application/json");
-            return ledStrip.getMode();
+            return this.ledStrip.getMode();
         });
 
         post("/api/mode", (req, res) -> {
             res.type("application/json");
-            return ledStrip.setMode(req.queryParams("mode"));
+            return this.ledStrip.setMode(req.queryParams("mode"));
         });
 
         // GET/SET Power
         get("/api/power", (req, res) -> {
             res.type("application/json");
-            return ledStrip.getPower();
+            return this.ledStrip.getPower();
         });
 
         post("/api/power", (req, res) -> {
             res.type("application/json");
-            return ledStrip.setPower(Integer.parseInt(req.queryParams("power")));
+            return this.ledStrip.setPower(Integer.parseInt(req.queryParams("power")));
         });
 
         // GET/SET Wait
         get("/api/wait", (req, res) -> {
             res.type("application/json");
-            return ledStrip.getDelay();
+            return this.ledStrip.getDelay();
         });
 
         post("/api/wait", (req, res) -> {
             res.type("application/json");
-            return ledStrip.setDelay(Integer.parseInt(req.queryParams("wait")));
+            return this.ledStrip.setDelay(Integer.parseInt(req.queryParams("wait")));
         });
 
         // GET/SET color
         get("/api/color/:index", (req, res) -> {
             res.type("application/json");
-            return ledStrip.getColor(Integer.parseInt(req.params("index")));
+            return this.ledStrip.getColor(Integer.parseInt(req.params("index")));
         });
 
         post("/api/color/:index", (req, res) -> {
             res.type("application/json");
-            return ledStrip.setColor(Integer.parseInt(req.params("index")), req.queryParams("color"));
+            return this.ledStrip.setColor(Integer.parseInt(req.params("index")), req.queryParams("color"));
         });
-
     }
 }
