@@ -45,7 +45,7 @@ public class LedStripController implements SparkApplication {
 
     public void init() {
 
-        externalStaticFileLocation("webapp");
+        externalStaticFileLocation("/webapp");
 
         before(new BasicAuthenticationFilter("/*", new AuthenticationDetails(System.getenv("LED_CONTROLLER_USER"), System.getenv("LED_CONTROLLER_PASS"))));
 
