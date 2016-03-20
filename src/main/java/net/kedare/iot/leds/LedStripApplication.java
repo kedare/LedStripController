@@ -11,18 +11,18 @@ import java.util.logging.Logger;
 
 import static spark.Spark.*;
 
-public class LedStripController implements SparkApplication {
+public class LedStripApplication implements SparkApplication {
 
     private LedStrip ledStrip;
     private String token;
     private String deviceId;
     private Logger logger;
 
-    public LedStripController() {
+    public LedStripApplication() {
         this.token = System.getenv("LED_CONTROLLER_TOKEN");
         this.deviceId = System.getenv("LED_CONTROLLER_DEVICE");
 
-        this.logger = Logger.getLogger(LedStripController.class.getName());
+        this.logger = Logger.getLogger(LedStripApplication.class.getName());
 
         try {
             this.ledStrip = new LedStrip(token, deviceId, logger);
@@ -39,13 +39,13 @@ public class LedStripController implements SparkApplication {
             configuredPort = 80;
         }
         port(configuredPort);
-        LedStripController controller = new LedStripController();
+        LedStripApplication controller = new LedStripApplication();
         controller.init();
     }
 
     public void init() {
 
-        externalStaticFileLocation("/webapp");
+        externalStaticFileLocation("target/static");
 
         before(new BasicAuthenticationFilter("/*", new AuthenticationDetails(System.getenv("LED_CONTROLLER_USER"), System.getenv("LED_CONTROLLER_PASS"))));
 

@@ -85,7 +85,7 @@
                     <archive>
                         <index>false</index>
                         <manifest>
-                            <mainClass>net.kedare.iot.leds.LedStripController</mainClass>
+                            <mainClass>net.kedare.iot.leds.LedStripApplication</mainClass>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>dependency-jars/</classpathPrefix>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
