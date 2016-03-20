@@ -16,13 +16,23 @@ public class LedStripApplication implements SparkApplication {
     private LedStrip ledStrip;
     private String token;
     private String deviceId;
+    private String user;
+    private String password;
     private Logger logger;
 
-    public LedStripApplication() {
+    public LedStripApplication() throws Exception {
         this.token = System.getenv("LED_CONTROLLER_TOKEN");
         this.deviceId = System.getenv("LED_CONTROLLER_DEVICE");
+        this.user = System.getenv("LED_CONTROLLER_USER");
+        this.password = System.getenv("LED_CONTROLLER_PASS");
 
         this.logger = Logger.getLogger(LedStripApplication.class.getName());
+
+        if (this.token == null || this.deviceId == null || this.user == null || this.password == null) {
+            logger.log(Level.SEVERE, "Please make sure all the required environment variables are configured : ");
+            logger.log(Level.SEVERE, "LED_CONTROLLER_TOKEN, LED_CONTROLLER_DEVICE, LED_CONTROLLER_USER, LED_CONTROLLER_PASS");
+            throw new Exception("Missing environment variables");
+        }
 
         try {
             this.ledStrip = new LedStrip(token, deviceId, logger);
@@ -44,10 +54,8 @@ public class LedStripApplication implements SparkApplication {
     }
 
     public void init() {
-
         externalStaticFileLocation("target/static");
-
-        before(new BasicAuthenticationFilter("/*", new AuthenticationDetails(System.getenv("LED_CONTROLLER_USER"), System.getenv("LED_CONTROLLER_PASS"))));
+        before(new BasicAuthenticationFilter("/*", new AuthenticationDetails(this.user, this.password)));
 
         // Modes list
         get("/api/modes", (req, res) -> {
